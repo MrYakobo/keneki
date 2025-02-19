@@ -13,14 +13,20 @@ unshare -r -n curl example.com
 curl: (6) Could not resolve host: example.com
 ```
 
-my use case however requires a static binary, such that if you're given that binary,
-you'll have little to no chance of extracting the binary and running that directly.
+my use case however requires a static binary; such that if you're given that binary,
+you'll have a hard time recovering the original non-quarantined binary.
 
 ## usage
 
-```
+```bash
 EMBEDDED_BINARY=$(which curl) cargo build --release
 ./target/release/keneki example.com
 
-curl: (6) Could not resolve host: example.com
+# curl: (6) Could not resolve host: example.com
+
+rm -rf target
+EMBEDDED_BINARY=$(which python3) cargo build --release
+./target/release/keneki -c 'import requests; requests.get("https://example.com")'
+
+# [Errno -3] Temporary failure in name resolution
 ```
